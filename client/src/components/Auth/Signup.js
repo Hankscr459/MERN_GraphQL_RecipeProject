@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { withRouter } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import Error from '../Error'
 import { SIGNUP_USER } from '../../queries'
@@ -18,12 +19,14 @@ const Signup = props => {
         setValues({...values, [name]: event.target.value})
     }
 
-    const onSubmit = event => {
+    const onSubmit = (event, signupUser) => {
         event.preventDefault()
         signupUser({
             variables: { username, email, password }
-        }).then(data => {
+        }).then( async ({data}) => {
             console.log(data)
+            localStorage.setItem('token', data.signupUser.token)
+            await props.refetch()
             setValues({
                 ...values,
                 username: '',
@@ -31,8 +34,9 @@ const Signup = props => {
                 password: '',
                 passwordConfirmation: ''
             })
+            props.history.push('/')
         }).catch(e => {
-            console.log(e)
+            // console.log(e)
         })
     }
 
@@ -48,7 +52,7 @@ const Signup = props => {
             {loading && <div>Loading...</div>}
             <form 
             className='form' 
-            onSubmit={onSubmit}>
+            onSubmit={event => onSubmit(event, signupUser)}>
                 <input 
                     type='text' 
                     name='username' 
@@ -89,4 +93,4 @@ const Signup = props => {
         </div>
     )
 }
-export default Signup
+export default withRouter(Signup)
