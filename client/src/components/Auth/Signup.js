@@ -84,7 +84,7 @@ const Signup = props => {
                 <button 
                     type='submit' 
                     className='button-primary'
-                    disabled={loading || validateForm() || error}
+                    disabled={loading || validateForm()}
                 >
                     Submit
                 </button>

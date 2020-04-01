@@ -13,8 +13,9 @@ const Signin = props => {
 
     const  { username, password } = values
 
-    const handleChange = name => event => {
-        setValues({...values, [name]: event.target.value})
+    const handleChange = event => {
+        const { name, value } = event.target
+        setValues({...values, [name]: value})
     }
 
     const onSubmit = (e, signinUser) => {
@@ -32,7 +33,7 @@ const Signin = props => {
             })
             props.history.push('/')
         }).catch(e => {
-            // console.log(e)
+            console.log(e)
         })
     }
 
@@ -55,19 +56,19 @@ const Signin = props => {
                     name='username' 
                     placeholder='Username' 
                     value={username}
-                    onChange={handleChange('username')} 
+                    onChange={handleChange} 
                 />
                 <input 
                     type='password' 
                     name='password' 
                     placeholder='Password' 
                     value={password}
-                    onChange={handleChange('password')} 
+                    onChange={handleChange} 
                 />
                 <button 
                     type='submit' 
                     className='button-primary'
-                    disabled={loading || validateForm() || error}
+                    disabled={loading || validateForm()}
                 >
                     Submit
                 </button>
