@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import { ADD_RECIPE, GET_ALL_RECIPES } from '../../queries'
+import withAuth from '../withAuth'
 import Error from '../Error'
 
 const AddRecipe = props => {
@@ -114,4 +115,7 @@ const AddRecipe = props => {
     )
 }
 
-export default withRouter(AddRecipe)
+export default withAuth(session => session && 
+session.getCurrentUser)(
+    withRouter(AddRecipe)
+)
