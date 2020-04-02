@@ -32,4 +32,10 @@ const RecipeSchema = new Schema({
     }
 })
 
+RecipeSchema.index({
+    // we're searching on every field with our recipe
+    // and we're going to set that to text
+    '$**': 'text'
+})
+
 module.exports = mongoose.model('Recipe', RecipeSchema)
