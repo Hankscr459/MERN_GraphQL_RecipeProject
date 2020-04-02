@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
-import { ADD_RECIPE, GET_ALL_RECIPES } from '../../queries'
+import { ADD_RECIPE, GET_ALL_RECIPES, GET_USER_RECIPES } from '../../queries'
 import withAuth from '../withAuth'
 import Error from '../Error'
 
@@ -43,7 +43,10 @@ const AddRecipe = props => {
     const onSubmit = (event, addRecipe) => {
         event.preventDefault()
         addRecipe({
-            variables: { name, category, description, instructions, username }
+            variables: { name, category, description, instructions, username },
+            refetchQueries: [
+                { query: GET_USER_RECIPES, variables: { username } }
+            ]
         }).then(({data}) => {
             console.log(data)
             setValues({
