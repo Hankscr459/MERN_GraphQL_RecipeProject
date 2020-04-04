@@ -39,7 +39,7 @@ const UserRecipes = ({ username }) => {
                     {query: GET_CURRENT_USER}
                 ]
             }).then(({data}) => {
-                console.log(data)
+                // console.log(data)
             })
         }
     }

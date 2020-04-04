@@ -49,17 +49,16 @@ const LikeRecipe = ({ refetch, session, _id }) => {
             likeRecipe({
                 variables: { _id, username }
             }).then( async ({data}) => {
-                console.log(data)
+                // console.log(data)
                 await refetch()
             })
         } else {
             unlikeRecipe({
                 variables: { _id, username }
             }).then(async ({ data }) => {
-                console.log(data)
+                // console.log(data)
                 await refetch()
             })
-            console.log('unlike')
         }
     }
 

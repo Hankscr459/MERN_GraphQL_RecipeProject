@@ -24,7 +24,7 @@ const Signup = props => {
         signupUser({
             variables: { username, email, password }
         }).then( async ({data}) => {
-            console.log(data)
+            // console.log(data)
             localStorage.setItem('token', data.signupUser.token)
             await props.refetch()
             setValues({

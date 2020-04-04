@@ -48,7 +48,7 @@ const AddRecipe = props => {
                 { query: GET_USER_RECIPES, variables: { username } }
             ]
         }).then(({data}) => {
-            console.log(data)
+            // console.log(data)
             setValues({
                 ...values,
                 name: '',
