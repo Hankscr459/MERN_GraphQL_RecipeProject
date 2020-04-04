@@ -19,13 +19,32 @@ const RecipePage = ({match}) => {
 
     return (
         <div className='App'>
-            <h2>{data.getRecipe.name}</h2>
-            <p>Category: {data.getRecipe.category}</p>
-            <p>Description: {data.getRecipe.description}</p>
-            <p>Instructions: {data.getRecipe.instructions}</p>
-            <p>Likes: {data.getRecipe.likes}</p>
-            <p>Created By: {data.getRecipe.username}</p> 
-            <LikeRecipe _id={_id}/>
+            <div 
+                style={{ background: `url(${data.getRecipe.imageUrl}) center center / cover no-repeat` }}
+                className='recipe-image'
+            />
+            <div className='recipe'>
+                <div className='recipe-header'>
+                    <h2 className='recipe-name'>
+                        <strong>{data.getRecipe.name}</strong>
+                    </h2>
+                    <h5>
+                        <strong>Category: {data.getRecipe.category}</strong>
+                    </h5>
+                    <p>Likes: {data.getRecipe.likes}<span role='img' aria-label='heart'>❤️</span></p>
+                    <p>
+                        Created By: <strong>{data.getRecipe.username}</strong>
+                    </p> 
+                    <blockquote className='recipe-description'>
+                        Description: {data.getRecipe.description}
+                    </blockquote>
+                    <h3 className='recipe-instructions__title'>Instructions</h3>
+                    <div className='recipe-instructions'>
+                        {data.getRecipe.instructions}
+                    </div>
+                </div>
+                <LikeRecipe _id={_id}/>
+            </div>
         </div>
     )
 }

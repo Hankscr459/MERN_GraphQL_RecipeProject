@@ -24,11 +24,12 @@ const AddRecipe = props => {
     const [values, setValues] = useState({
         name: '',
         category: 'Breakfast',
+        imageUrl: '',
         instructions: '',
         description: '',
         username: ''
     })
-    const { name, category, instructions, description } = values
+    const { name, imageUrl, category, instructions, description } = values
     const handleChange = name => event => {
         setValues({...values, [name]: event.target.value})
     }
@@ -43,7 +44,7 @@ const AddRecipe = props => {
     const onSubmit = (event, addRecipe) => {
         event.preventDefault()
         addRecipe({
-            variables: { name, category, description, instructions, username },
+            variables: { name, imageUrl, category, description, instructions, username },
             refetchQueries: [
                 { query: GET_USER_RECIPES, variables: { username } }
             ]
@@ -63,7 +64,7 @@ const AddRecipe = props => {
     }
 
     const validateForm = () => {
-        const isInvalid = !name || !category || !description || !instructions
+        const isInvalid = !name || !category || !imageUrl || !description || !instructions
         return isInvalid
     }
 
@@ -76,11 +77,18 @@ const AddRecipe = props => {
                 onSubmit={event => onSubmit(event, addRecipe)}
             >
                 <input 
-                    type='type' 
+                    type='text' 
                     name='name' 
                     placeholder='Recipe Name' 
                     onChange={handleChange('name')} 
                     value={name}
+                />
+                <input 
+                    type='text' 
+                    name='imageUrl' 
+                    placeholder='Recipe Image' 
+                    onChange={handleChange('imageUrl')} 
+                    value={imageUrl}
                 />
                 <select 
                     name='category' 
