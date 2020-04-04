@@ -1,113 +1,92 @@
-import React from "react";
+import React, {useState, useEffect} from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { LIKE_RECIPE, UNLIKE_RECIPE, GET_RECIPE } from '../../queries'
+import withSession from '../withSession'
 
-import { Mutation } from "react-apollo";
-import { LIKE_RECIPE, UNLIKE_RECIPE, GET_RECIPE } from "../../queries";
-import withSession from "../withSession";
+const LikeRecipe = ({ refetch, session, _id }) => {
+    const [values, setValue] = useState({
+            username: '',
+            liked: false
+        },
 
-class LikeRecipe extends React.Component {
-  state = {
-    liked: false,
-    username: ""
-  };
+    )
+    const { username, liked } = values
+    const [likeRecipe] = useMutation(LIKE_RECIPE, {
+        update: (cache, { data: { likeRecipe } }) => {
+            const { getRecipe } = cache.readQuery({
+                query: GET_RECIPE,
+                variables: {_id}
+            })
+            
+            cache.writeQuery({
+                query: GET_RECIPE,
+                variables: { _id },
+                data: {
+                    getRecipe: { ...getRecipe, likes: likeRecipe.likes + 1 }
+                }
+            })
+        }
+    })
+    const [unlikeRecipe] = useMutation(UNLIKE_RECIPE, {
+        update: (cache, { data: { unlikeRecipe } }) => {
+            const { getRecipe } = cache.readQuery({
+                query: GET_RECIPE,
+                variables: {_id}
+            })
+            
+            cache.writeQuery({
+                query: GET_RECIPE,
+                variables: { _id },
+                data: {
+                    getRecipe: { ...getRecipe, likes: unlikeRecipe.likes - 1 }
+                }
+            })
+        }
+    })
 
-  componentDidMount() {
-    if (this.props.session.getCurrentUser) {
-      const { username, favorites } = this.props.session.getCurrentUser;
-      const { _id } = this.props;
-      const prevLiked =
-        favorites.findIndex(favorite => favorite._id === _id) > -1;
-      this.setState({
-        liked: prevLiked,
-        username
-      });
+    const handleLike = (likeRecipe,unlikeRecipe) => {
+        if(liked) {
+            likeRecipe({
+                variables: { _id, username }
+            }).then( async ({data}) => {
+                console.log(data)
+                await refetch()
+            })
+        } else {
+            unlikeRecipe({
+                variables: { _id, username }
+            }).then(async ({ data }) => {
+                console.log(data)
+                await refetch()
+            })
+            console.log('unlike')
+        }
     }
-  }
 
-  handleClick = (likeRecipe, unlikeRecipe) => {
-    this.setState(
-      prevState => ({
-        liked: !prevState.liked
-      }),
-      () => this.handleLike(likeRecipe, unlikeRecipe)
-    );
-  };
-
-  handleLike = (likeRecipe, unlikeRecipe) => {
-    if (this.state.liked) {
-      likeRecipe().then(async ({ data }) => {
-        // console.log(data);
-        await this.props.refetch();
-      });
-    } else {
-      unlikeRecipe().then(async ({ data }) => {
-        // console.log(data);
-        await this.props.refetch();
-      });
+    const handleClick = (likeRecipe,unlikeRecipe) => {
+        setValue(
+            prevState => ({
+                ...prevState,
+                liked: !prevState.liked
+            }),
+            handleLike(likeRecipe,unlikeRecipe)
+        )
     }
-  };
 
-  updateLike = (cache, { data: { likeRecipe } }) => {
-    const { _id } = this.props;
-    const { getRecipe } = cache.readQuery({
-      query: GET_RECIPE,
-      variables: { _id }
-    });
-    console.log(cache)
-    cache.writeQuery({
-      query: GET_RECIPE,
-      variables: { _id },
-      data: {
-        getRecipe: { ...getRecipe, likes: likeRecipe.likes +1 }
-      }
-    });
-  };
-
-  updateUnlike = (cache, { data: { unlikeRecipe } }) => {
-    const { _id } = this.props;
-    const { getRecipe } = cache.readQuery({
-      query: GET_RECIPE,
-      variables: { _id }
-    });
-    console.log(cache)
-    cache.writeQuery({
-      query: GET_RECIPE,
-      variables: { _id },
-      data: {
-        getRecipe: { ...getRecipe, likes: unlikeRecipe.likes -1  }
-      }
-    });
-  };
-
-  render() {
-    const { liked, username } = this.state;
-    const { _id } = this.props;
+    useEffect(() => {
+        if(session.getCurrentUser) {
+            const { username, favorites } = session.getCurrentUser
+            const liked = favorites.findIndex(favorite => favorite._id === _id) === -1
+            setValue({ username, liked})
+        }
+    },[session.getCurrentUser, _id])
     return (
-      <Mutation
-        mutation={UNLIKE_RECIPE}
-        variables={{ _id, username }}
-        update={this.updateUnlike}
-      >
-        {unlikeRecipe => (
-          <Mutation
-            mutation={LIKE_RECIPE}
-            variables={{ _id, username }}
-            update={this.updateLike}
-          >
-            {likeRecipe =>
-              username && (
-                <button
-                  className="like-button"
-                  onClick={() => this.handleClick(likeRecipe, unlikeRecipe)}
-                >
-                  {liked ? "Unlike" : "Like"}
-                </button>
-              )
-            }
-          </Mutation>
-        )}
-      </Mutation>
-    );
-  }
+        username && (
+            <button onClick={() => handleClick(likeRecipe,unlikeRecipe)}>
+                {liked ? 'Liked' : 'UnLiked' }
+            </button>
+        )
+    )
 }
 
-export default withSession(LikeRecipe);
+export default withSession(LikeRecipe)
