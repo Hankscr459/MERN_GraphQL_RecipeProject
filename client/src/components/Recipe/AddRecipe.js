@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { ADD_RECIPE, GET_ALL_RECIPES, GET_USER_RECIPES } from '../../queries'
 import withAuth from '../withAuth'
 import Error from '../Error'
+import CKEditor from 'react-ckeditor-component'
 
 const AddRecipe = props => {
     const [addRecipe, {loading, error}] = useMutation(ADD_RECIPE, {
@@ -25,13 +26,18 @@ const AddRecipe = props => {
         name: '',
         category: 'Breakfast',
         imageUrl: '',
-        instructions: '',
         description: '',
         username: ''
     })
-    const { name, imageUrl, category, instructions, description } = values
+    const [instructions, setInstructions] = useState('')
+    const { name, imageUrl, category, description } = values
     const handleChange = name => event => {
         setValues({...values, [name]: event.target.value})
+    }
+
+    const handleEditorChange = event => {
+        const newContent = event.editor.getData()
+        setInstructions(newContent)
     }
 
     const username = props.session.getCurrentUser.username
@@ -55,8 +61,8 @@ const AddRecipe = props => {
                 name: '',
                 category: '',
                 description: '',
-                instructions: ''
             })
+            setInstructions('')
             props.history.push('/')
         }).catch(e => {
             // console.log(e)
@@ -107,11 +113,11 @@ const AddRecipe = props => {
                     onChange={handleChange('description')} 
                     value={description}
                 />
-                <textarea 
-                    name='instructions' 
-                    placeholder='Add instructions' 
-                    onChange={handleChange('instructions')} 
-                    value={instructions}
+                <label htmlFor='instructions'>Add Instructions</label>
+                <CKEditor
+                    name='instructions'
+                    content={instructions}
+                    events={{ change: handleEditorChange }}
                 />
                 <button 
                     disabled={loading || validateForm()}
@@ -130,3 +136,10 @@ export default withAuth(session => session &&
 session.getCurrentUser)(
     withRouter(AddRecipe)
 )
+
+// <textarea 
+//     name='instructions' 
+//     placeholder='Add instructions' 
+//     onChange={handleChange('instructions')} 
+//     value={instructions}
+// />

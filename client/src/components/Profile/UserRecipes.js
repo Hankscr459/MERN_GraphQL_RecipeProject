@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_USER_RECIPES, DELETE_USER_RECIPE, GET_ALL_RECIPES, GET_CURRENT_USER } from '../../queries'
+import Spinner from '../Spinner'
 
 const UserRecipes = ({ username }) => {
     const [ deleteUserRecipe, attrs={} ] = useMutation(DELETE_USER_RECIPE, {
@@ -25,7 +26,7 @@ const UserRecipes = ({ username }) => {
         variables: {username}
     })
 
-    if (loading) return <p>Loading...</p>
+    if (loading) return <Spinner />
     if (error) return <p>Error</p>
     // console.log(data)
 

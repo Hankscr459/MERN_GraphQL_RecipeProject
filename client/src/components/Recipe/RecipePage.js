@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_RECIPE } from '../../queries'
 import LikeRecipe from './LikeRecipe'
+import Spinner from '../Spinner'
 
 const RecipePage = ({match}) => {
     const { _id } = match.params
@@ -12,7 +13,7 @@ const RecipePage = ({match}) => {
         variables: {_id}
     })
     
-    if (loading) return <p>Loading...</p>
+    if (loading) return <Spinner />
     if (error) return <p>Error</p>
 
     // console.log(data)
@@ -39,8 +40,10 @@ const RecipePage = ({match}) => {
                         Description: {data.getRecipe.description}
                     </blockquote>
                     <h3 className='recipe-instructions__title'>Instructions</h3>
-                    <div className='recipe-instructions'>
-                        {data.getRecipe.instructions}
+                    <div className='recipe-instructions' 
+                        dangerouslySetInnerHTML={{__html: 
+                        data.getRecipe.instructions }}
+                    >
                     </div>
                 </div>
                 <LikeRecipe _id={_id}/>
