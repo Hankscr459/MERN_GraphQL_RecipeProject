@@ -82,6 +82,7 @@ const AddRecipe = props => {
                 className='form'
                 onSubmit={event => onSubmit(event, addRecipe)}
             >
+                <label htmlFor='name'>Recipe Name</label>
                 <input 
                     type='text' 
                     name='name' 
