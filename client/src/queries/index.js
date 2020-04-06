@@ -71,6 +71,19 @@ export const DELETE_USER_RECIPE = gql`
     }
 `
 
+export const UPDATE_USER_RECIPE = gql`
+    mutation($_id: ID!, $name: String!, $description: String!, $imageUrl: String!, $category: String!) {
+        updateUserRecipe(_id: $_id, name: $name, description: $description, imageUrl: $imageUrl, category: $category) {
+            _id
+            name
+            likes
+            category
+            imageUrl
+            description
+        }
+    }
+`
+
 /* User Queries */
 export const GET_CURRENT_USER = gql`
     query {
